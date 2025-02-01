@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, createRef } from 'react';
 import '../styles/App.css';
 
 class AppView extends Component {
@@ -9,7 +9,7 @@ class AppView extends Component {
             inputText: '',
             isDarkMode: false
         };
-        this.messagesEndRef = React.createRef();
+        this.messagesEndRef = createRef();
     }
 
     setPresenter(presenter) {
