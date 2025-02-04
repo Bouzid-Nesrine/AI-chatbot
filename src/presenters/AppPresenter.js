@@ -15,7 +15,7 @@ class AppPresenter {
         this.view.updateState(data);
     }
 
-    handleAction(action, payload) {
+    async handleAction(action, payload) {
         switch (action) {
             case 'SEND_MESSAGE':
                 if (payload.trim()) {
@@ -27,12 +27,10 @@ class AppPresenter {
                     this.model.updateInputText('');
                     this.updateView();
 
-                    // Get and add bot response after a short delay
-                    setTimeout(() => {
-                        const botResponse = this.model.getBotResponse(payload);
-                        this.model.addMessage(botResponse, false);
-                        this.updateView();
-                    }, 1000);
+                    // Get bot response
+                    const botResponse = await this.model.getBotResponse(payload);
+                    this.model.addMessage(botResponse, false);
+                    this.updateView();
                 }
                 break;
 

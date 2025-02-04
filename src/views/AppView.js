@@ -7,7 +7,8 @@ class AppView extends Component {
         this.state = {
             messages: [],
             inputText: '',
-            isDarkMode: false
+            isDarkMode: false,
+            isTyping: false
         };
         this.messagesEndRef = createRef();
     }
@@ -50,46 +51,49 @@ class AppView extends Component {
     }
 
     render() {
-        const { messages, inputText, isDarkMode } = this.state;
-        
+        const { messages, inputText, isDarkMode, isTyping } = this.state;
+
         return (
-            <div className={`chat-container ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+            <div className={`app ${isDarkMode ? 'dark' : 'light'}`}>
                 <div className="chat-header">
-                    <h1>Chat Bot</h1>
-                    <button 
-                        className="theme-toggle"
-                        onClick={this.toggleTheme}
-                        aria-label={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                    >
-                        {isDarkMode ? '🌞' : '🌙'}
+                    <h1>AI Chatbot</h1>
+                    <button onClick={this.toggleTheme} className="theme-toggle">
+                        {isDarkMode ? '☀️' : '🌙'}
                     </button>
                 </div>
                 
-                <div className="messages-container">
-                    {messages.map(message => (
-                        <div
-                            key={message.id}
-                            className={`message ${message.isUser ? 'user-message' : 'bot-message'}`}
-                        >
+                <div className="chat-messages">
+                    {messages.map(msg => (
+                        <div key={msg.id} className={`message ${msg.isUser ? 'user' : 'bot'}`}>
                             <div className="message-content">
-                                <p>{message.text}</p>
-                                <span className="timestamp">{message.timestamp}</span>
+                                <p>{msg.text}</p>
+                                <span className="timestamp">{msg.timestamp}</span>
                             </div>
                         </div>
                     ))}
+                    {isTyping && (
+                        <div className="message bot">
+                            <div className="message-content">
+                                <div className="typing-indicator">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                     <div ref={this.messagesEndRef} />
                 </div>
 
-                <form className="input-form" onSubmit={this.handleSubmit}>
-                    <input
-                        type="text"
+                <form onSubmit={this.handleSubmit} className="chat-input">
+                    <textarea
                         value={inputText}
                         onChange={this.handleInputChange}
                         onKeyPress={this.handleKeyPress}
                         placeholder="Type your message..."
-                        className="message-input"
+                        rows="1"
                     />
-                    <button type="submit" className="send-button">
+                    <button type="submit" disabled={!inputText.trim()}>
                         Send
                     </button>
                 </form>

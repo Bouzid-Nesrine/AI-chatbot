@@ -1,10 +1,14 @@
+import OllamaService from './OllamaService';
+
 class AppModel {
     constructor() {
         this.data = {
             messages: [],
             inputText: '',
-            isDarkMode: false
+            isDarkMode: false,
+            isTyping: false
         };
+        this.ollamaService = new OllamaService();
     }
 
     getData() {
@@ -22,16 +26,17 @@ class AppModel {
         return this.data;
     }
 
-    getBotResponse(userMessage) {
-        // Simple bot responses - you can expand this with more sophisticated logic
-        const responses = [
-            "That's interesting! Tell me more.",
-            "I understand what you mean.",
-            "How does that make you feel?",
-            "Could you elaborate on that?",
-            "I'm here to listen and help.",
-        ];
-        return responses[Math.floor(Math.random() * responses.length)];
+    async getBotResponse(userMessage) {
+        try {
+            this.data.isTyping = true;
+            const response = await this.ollamaService.generateResponse(userMessage);
+            this.data.isTyping = false;
+            return response;
+        } catch (error) {
+            console.error('Error getting bot response:', error);
+            this.data.isTyping = false;
+            return "I apologize, but I'm having trouble generating a response right now. Please try again.";
+        }
     }
 
     updateInputText(text) {

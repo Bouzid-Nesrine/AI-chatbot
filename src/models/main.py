@@ -1,22 +1,51 @@
 import requests
 import json
+import time
 
-url = "http://localhost:11434/api/generate"
+def query_ollama(prompt, model="llama3.2", max_tokens=100):  
+    url = "http://localhost:11434/api/generate"
+    
+    headers = {
+        'Content-Type': 'application/json',
+    }
+    
+    data = {
+        "model": model,
+        "prompt": prompt,
+        "stream": False,
+        "options": {
+            "num_predict": max_tokens,  
+            "temperature": 0.7,  
+            "top_k": 40,        
+            "top_p": 0.9        
+        }
+    }
 
-headers = {
-    'content-type' :'application/json',
-}
-data = {
-    "model": "llama3.2",
-    "prompt":"Why is the sky blue?",
-    "stream" :False
-}
+    try:
+        print(f"Sending request to {url}")
+        print(f"Request data: {json.dumps(data, indent=2)}")
+        
+        start_time = time.time()
+        response = requests.post(url, headers=headers, data=json.dumps(data))
+        end_time = time.time()
+        
+        print(f"\nResponse time: {end_time - start_time:.2f} seconds")
+        print(f"Response status code: {response.status_code}")
+        
+        response.raise_for_status()
+        
+        result = response.json()
+        return result['response']
+    
+    except requests.exceptions.ConnectionError:
+        return "Error: Could not connect to Ollama. Make sure Ollama is running on your system."
+    except requests.exceptions.RequestException as e:
+        return f"Error: {str(e)}"
+    except json.JSONDecodeError:
+        return "Error: Invalid response from Ollama"
 
-response = requests.post(url , headers = headers , data = json.dumps(data))
-
-if response.status_code == 200 : 
-    print(response.text)
-else :
-    print("Error" , response.status_code , response.text)
-
- 
+# Example usage
+if __name__ == "__main__":
+    response = query_ollama("What is 2+2?", max_tokens=50)  
+    print("\nFinal response:")
+    print(response)
