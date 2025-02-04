@@ -5,6 +5,7 @@ class OllamaService {
 
     async generateResponse(prompt, maxTokens = 100) {
         try {
+            console.log('Sending request to Ollama...', { prompt, maxTokens });
             const response = await fetch(this.API_URL, {
                 method: 'POST',
                 headers: {
@@ -24,14 +25,16 @@ class OllamaService {
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                const errorText = await response.text();
+                throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
             }
 
             const data = await response.json();
+            console.log('Received response from Ollama:', data);
             return data.response;
         } catch (error) {
-            console.error('Error calling Ollama API:', error);
-            return "I apologize, but I'm having trouble connecting to my language model right now. Please try again in a moment.";
+            console.error('Error in OllamaService:', error);
+            throw error; // Re-throw to handle in AppModel
         }
     }
 }

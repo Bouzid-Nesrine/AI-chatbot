@@ -39,8 +39,8 @@ class AppPresenter {
                 this.updateView();
                 break;
 
-            case 'TOGGLE_THEME':
-                this.model.toggleTheme();
+            case 'UPDATE_THEME_COLOR':
+                this.model.updateThemeColor(payload);
                 this.updateView();
                 break;
 
