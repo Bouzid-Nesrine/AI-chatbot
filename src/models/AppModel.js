@@ -5,8 +5,8 @@ class AppModel {
         this.data = {
             messages: [],
             inputText: '',
-            isDarkMode: false,
-            isTyping: false
+            isTyping: false,
+            themeColor: '#f8b6d2'  // Default pink color
         };
         this.ollamaService = new OllamaService();
     }
@@ -26,6 +26,11 @@ class AppModel {
         return this.data;
     }
 
+    updateThemeColor(color) {
+        this.data.themeColor = color;
+        return this.data;
+    }
+
     async getBotResponse(userMessage) {
         try {
             this.data.isTyping = true;
@@ -41,11 +46,6 @@ class AppModel {
 
     updateInputText(text) {
         this.data.inputText = text;
-        return this.data;
-    }
-
-    toggleTheme() {
-        this.data.isDarkMode = !this.data.isDarkMode;
         return this.data;
     }
 }
